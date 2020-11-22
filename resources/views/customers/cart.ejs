@@ -1,5 +1,7 @@
 <section class="cart py-16">
 
+    <% if(session.cart) { %>
+
     <div class='order container mx-auto px-10 w-1/2'>
 
         <div class="flex items-center border-b border-gray-300">
@@ -12,41 +14,21 @@
 
         <div class="pizza-list">
 
-            <div class="flex items-center my-8">
-                <img class="w-24" src="/img/mashrom-pizza.png" alt="">
-                <div class="flex-1 ml-4">
-                    <h1>Mashrom Pizza</h1>
-                    <span>Mudium</span>
-                </div>
-
-                <span class="flex-1">1 Pcs</span>
-                <span class="font-bold text-lg">&#x20B9;250</span>
-            </div>
-            
+        <% for(let pizza of Object.values(session.cart.items)) { %>
 
             <div class="flex items-center my-8">
-                <img class="w-24" src="/img/mashrom-pizza.png" alt="">
+                <img class="w-24" src="/img/<%= pizza.item.image %>" alt="">
                 <div class="flex-1 ml-4">
-                    <h1>Mashrom Pizza</h1>
-                    <span>Mudium</span>
+                    <h1><%= pizza.item.name %></h1>
+                    <span><%= pizza.item.size %></span>
                 </div>
 
-                <span class="flex-1">1 Pcs</span>
-                <span class="font-bold text-lg">&#x20B9;250</span>
-            </div>
-            
-
-            <div class="flex items-center my-8">
-                <img class="w-24" src="/img/mashrom-pizza.png" alt="">
-                <div class="flex-1 ml-4">
-                    <h1>Mashrom Pizza</h1>
-                    <span>Mudium</span>
-                </div>
-
-                <span class="flex-1">1 Pcs</span>
-                <span class="font-bold text-lg">&#x20B9;250</span>
+                <span class="flex-1"><%= pizza.Qty %></span>
+                <span class="font-bold text-lg">&#x20B9;<%= pizza.item.price * pizza.Qty %></span>
             </div>
 
+            <% } %>
+ 
         </div>
 
         <hr> 
@@ -54,7 +36,7 @@
         <div class='text-right py-4'>
             <div>
                 <span class="text-lg font-bold">Total Amount:</span>
-                <span class="amount text-2xl font-bold ml-2">&#x20B9;250</span>
+                <span class="amount text-2xl font-bold ml-2">&#x20B9;<%= session.cart.totalPrice %></span>
             </div>
 
             <div>
@@ -73,8 +55,9 @@
  
     </div>
 
+    <% }else { %>
 
-    <!-- <div class="empty-cart py-10">
+    <div class="empty-cart py-10">
 
         <div class="container mx-auto text-center px-10">
 
@@ -88,5 +71,7 @@
     
         </div>
     
-    </div> -->
+    </div>
+
+    <% } %>
 </section>
