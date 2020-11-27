@@ -1,4 +1,4 @@
-
+'use strict';
 const express = require('express');
 const app = express();
 const ejs = require('ejs');
@@ -12,10 +12,13 @@ const session = require('express-session')
 const MongodbStore = require('connect-mongo')(session)
 const flash = require('express-flash')
 const cookieParser = require('cookie-parser')
+const passport = require('passport')
+const passportInit = require('./app/config/passport') 
 const PORT = process.env.PORT || 3000;
 
 
 dotenv.config({path:'./config.env'})
+
 
 
 // Connect with mongo DATABASE
@@ -49,11 +52,20 @@ app.use(session({
   cookie:{maxAge : 1000 * 60 * 60 *24 }
 }))
 
+
+// Passport config
+passportInit(passport);
+app.use(passport.initialize());
+app.use(passport.session());
+
 app.use(flash());
+app.use(express.urlencoded({extended:false}))
+app.use(express.json());
 
 //Globle Middleware 
 app.use((req,res,next)=>{
   res.locals.session = req.session
+  res.locals.user = req.user
 next()
 })
  
@@ -66,7 +78,7 @@ app.set('view engine', 'ejs');
 
 
 // Serving static files
-app.use(express.json());
+
 app.use(express.static(path.join(__dirname,'public')));
 // app.use(cookieParser());
 
