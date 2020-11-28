@@ -11,6 +11,10 @@ exports.getLoginForm = (req, res) => {
     });
   };
 
+const _getRedirectUrl = (req) => {
+  return req.user.role === 'admin' ? '/admin/orders' : '/customer/orders'
+}
+
 exports.login = (req, res,next) => {
   const {email, password } = req.body;
 
@@ -36,7 +40,8 @@ exports.login = (req, res,next) => {
         return next(err)
       }
 
-      return res.redirect('/')
+
+      return res.redirect(_getRedirectUrl(req))
     })
   })(req, res,next)
 }
