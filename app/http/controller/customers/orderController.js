@@ -1,6 +1,7 @@
 const Order = require('../../../models/orderModel')
 const moment = require('moment')
 
+
 exports.store= (req, res) => {
     const {phone ,address } = req.body
 
@@ -19,6 +20,10 @@ exports.store= (req, res) => {
     order.save().then(result =>{
         req.flash('success','Order placed successfully')
         delete req.session.cart
+        // Emit 
+        const eventEmitter = req.app.get('eventEmitter')
+        eventEmitter.emit('orderPlaced',result)
+
         return res.redirect('/customer/orders')
     }).catch(err =>{
         req.flash('error','Something went wrong')
@@ -33,4 +38,15 @@ exports.index = async(req, res) => {
         orders:orders,
         moment: moment,
     })
+}
+
+exports.show = async (req, res) => {
+    const order = await Order.findById(req.params.id);
+    //Authrized User
+    let userId = JSON.stringify(req.user._id);
+    let customerId = JSON.stringify(order.customerId)
+    if(userId === customerId){
+        return res.render('customers/singleOrder', {order})
+    }
+        return res.redirect('/')
 }

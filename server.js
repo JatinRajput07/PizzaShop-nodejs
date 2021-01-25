@@ -13,8 +13,12 @@ const MongodbStore = require('connect-mongo')(session)
 const flash = require('express-flash')
 const cookieParser = require('cookie-parser')
 const passport = require('passport')
-const passportInit = require('./app/config/passport') 
+const passportInit = require('./app/config/passport')
+const events = require('events');
+
+
 const PORT = process.env.PORT || 3000;
+
 
 
 dotenv.config({path:'./config.env'})
@@ -41,6 +45,10 @@ const connection = mongoose.connection;
   mongooseConnection : connection,
   collection:'sessions'
 })
+
+// event Emmiter
+const eventEmitter = new events.EventEmitter();
+app.set('eventEmitter',eventEmitter)
 
 //session config
 
@@ -85,6 +93,26 @@ app.use(express.static(path.join(__dirname,'public')));
 app.use(routes);
 app.use('/pizza',menuroutes);
 
-app.listen(PORT, '127.0.0.1', () => {
+ const server =  app.listen(PORT, '127.0.0.1', () => {
   console.log(`hello from server port ${PORT}....`);
 })  
+
+//Socket  
+const io = require('socket.io')(server)
+
+io.on('connection',(socket)=>{
+  //Join  
+  console.log(socket.id)
+  socket.on('join',(orderId)=>{
+    console.log(orderId)
+    socket.join(orderId)
+  })
+})
+
+eventEmitter.on('orderUpdated',(data)=>{
+  io.to(`order_${data.id}`).emit('orderUpdated',data)
+})
+
+eventEmitter.on('orderPlaced',(data)=>{
+  io.to('adminRoom').emit('orderPlaced',data)
+})

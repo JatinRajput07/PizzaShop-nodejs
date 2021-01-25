@@ -10,6 +10,7 @@ const orderController = require('../app/http/controller/customers/orderControlle
 const authMiddleaware = require('../app/http/middleware/authMiddleware')
 const adminOrderController = require('../app/http/controller/admin/orderController')
 const adminMiddleware = require('../app/http/middleware/adminMiddleware')
+const statusController = require('../app/http/controller/admin/statuscontroller')
 
 
 router.get('/', homeController.getHomePage);
@@ -25,8 +26,10 @@ router.post('/updateCart',cartController.updateCart)
 //Customer routes
 router.post('/orders',authMiddleaware.auth,orderController.store)
 router.get('/customer/orders',authMiddleaware.auth,orderController.index)
+router.get('/customer/orders/:id',authMiddleaware.auth,orderController.show)
 
 // Admin routes 
 router.get('/admin/orders',adminMiddleware.admin,adminOrderController.adminGetOrder)
+router.post('/admin/order/status',adminMiddleware.admin,statusController.update)
 
 module.exports = router;

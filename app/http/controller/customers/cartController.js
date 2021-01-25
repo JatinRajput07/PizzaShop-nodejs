@@ -8,7 +8,7 @@ exports.updateCart = (req, res)=>{
 
     // console.log(req.session)
 
-    if(!req.session.cart){
+    if(!req.session.cart){ 
         req.session.cart = {
             items:{},
             totalQty: 0,
@@ -19,7 +19,7 @@ exports.updateCart = (req, res)=>{
     let cart = req.session.cart
 
     if(!cart.items[req.body._id]){
-        cart.items[req.body._id] = { item : req.body, Qty: 1 }
+        cart.items[req.body._id] = { item : req.body, Qty: 1 }  
         cart.totalQty = cart.totalQty + 1
         cart.totalPrice = cart.totalPrice + req.body.price
     } else{
